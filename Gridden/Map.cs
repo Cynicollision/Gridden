@@ -8,6 +8,8 @@ namespace Gridden
     /// </summary>
     public class Map
     {
+        public const int TileSize = 64;
+
         private char[][] _map;
         private Dictionary<char, string> _sprites;
 
@@ -86,14 +88,6 @@ namespace Gridden
         }
 
         /// <summary>
-        /// Returns the character matrix that represents the map.
-        /// </summary>
-        public char[][] GetCharMap()
-        {
-            return _map;
-        }
-
-        /// <summary>
         /// Adds an image with the given fileName to the available sprites for this map
         /// and assigns the given character c to represent that image.
         /// </summary>
@@ -108,6 +102,11 @@ namespace Gridden
         public Dictionary<char, string> GetSprites()
         {
             return _sprites;
+        }
+
+        public char GetCharAtPosition(int x, int y)
+        {
+            return _map[x][y];
         }
 
         /// <summary>
