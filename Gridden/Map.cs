@@ -11,7 +11,6 @@ namespace Gridden
     {
         public const int TileSize = 64;
 
-        private char[][] _map;
         private Dictionary<char, string> _sprites;
 
         /// <summary>
@@ -23,13 +22,13 @@ namespace Gridden
             _sprites = new Dictionary<char, string>();
 
             // blank space means empty tile.
-            _map = new char[w][];
+            _charMap = new char[w][];
             for (int i = 0; i < w; i ++)
             {
-                _map[i] = new char[h];
+                _charMap[i] = new char[h];
                 for (int j = 0; j < h; j++)
                 {
-                    _map[i][j] = ' ';
+                    _charMap[i][j] = ' ';
                 }
             }
 
@@ -39,6 +38,7 @@ namespace Gridden
         }
 
         #region Public properties
+
         private string _name;
         public string Name
         {
@@ -49,6 +49,19 @@ namespace Gridden
             set
             {
                 _name = value;
+            }
+        }
+
+        private char[][] _charMap;
+        public char[][] CharMap
+        {
+            get
+            {
+                return _charMap;
+            }
+            set
+            {
+                _charMap = value;
             }
         }
 
@@ -85,14 +98,16 @@ namespace Gridden
         /// </summary>
         public void SetCharAtPosition(int x, int y, char c)
         {
-            _map[x][y] = c;
+            _charMap[x][y] = c;
         }
 
+        /// <summary>
+        /// Returns the character at the given (x, y) position.
+        /// </summary>
         public char GetCharAtPosition(int x, int y)
         {
-            return _map[x][y];
+            return _charMap[x][y];
         }
-
 
         /// <summary>
         /// ToString override to format the map visually as depicted in the grid editor
@@ -102,11 +117,11 @@ namespace Gridden
         {
             string retVal = "";
 
-            for (int i = 0; i < _map[0].Length; i++)
+            for (int i = 0; i < _charMap[0].Length; i++)
             {
-                for (int j = 0; j < _map.Length; j++)
+                for (int j = 0; j < _charMap.Length; j++)
                 {
-                    retVal += _map[j][i].ToString();
+                    retVal += _charMap[j][i].ToString();
                 }
                 retVal += "\r\n";
             }

@@ -31,8 +31,7 @@ namespace Gridden
             });
 
             // setup form components
-            SetFormTitle(_editor.CurrentMap.Name);
-            SetGridDimensions(_editor.CurrentMap.MapWidth, _editor.CurrentMap.MapHeight);
+            RefreshDisplay();
         }
 
         #region Properties
@@ -61,7 +60,7 @@ namespace Gridden
         private void newToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
             MenuCommands.SetNewMap();
-            this.paintPanel.Invalidate();
+            RefreshDisplay();
         }
 
         // Map -> Save
@@ -74,16 +73,27 @@ namespace Gridden
         // Map -> Load
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _editor.CurrentMap = MenuCommands.LoadMapFromFile();
-            this.paintPanel.Invalidate();
+            // loadedMap is null if user clicks "Cancel" in open dialog.
+            Map loadedMap = MenuCommands.LoadMapFromFile();
+            if (loadedMap != null)
+            {
+                _editor.CurrentMap = loadedMap;
+                RefreshDisplay();
+            }
+        }
+
+        // Map -> Map Properties
+        private void mapPropertiesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MenuCommands.ViewMapProperties();
+            RefreshDisplay();
         }
 
         // Map -> View Text
         private void viewTextToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            MapTextViewer viewerForm = new MapTextViewer();
-            viewerForm.SetText(_editor.CurrentMap.ToString());
-            viewerForm.ShowDialog();
+            MenuCommands.ViewMapText();
+
         }
 
         #endregion
@@ -127,7 +137,7 @@ namespace Gridden
                     }
                 }
 
-                this.paintPanel.Invalidate();
+                RefreshDisplay();
             }
         }
 
@@ -206,16 +216,20 @@ namespace Gridden
 
         #endregion
 
-        public void SetGridDimensions(int tilesWide, int tilesTall)
+        private void RefreshDisplay()
         {
-            this.paintPanel.Size = new Size(tilesWide * Map.TileSize, tilesTall * Map.TileSize);
+            Map currentMap = MapEditor.Instance.CurrentMap;
+
+            // update the form title.
+            this.Text = "Gridden: " + currentMap.Name;
+
+            // resize and redraw the map editor.
+            this.paintPanel.Size = new Size(currentMap.MapWidth * Map.TileSize, currentMap.MapHeight * Map.TileSize);
+            this.paintPanel.Invalidate();
         }
 
-        public void SetFormTitle(string title)
-        {
-            this.Text = "Gridden: " + title;
-        }
 
+    
         public void SetFormStatusText(string text)
         {
             this.toolStripStatusLabel.Text = text;

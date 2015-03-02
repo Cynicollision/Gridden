@@ -109,6 +109,7 @@
             this.mapPropertiesToolStripMenuItem.Name = "mapPropertiesToolStripMenuItem";
             this.mapPropertiesToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.mapPropertiesToolStripMenuItem.Text = "Map Properties";
+            this.mapPropertiesToolStripMenuItem.Click += new System.EventHandler(this.mapPropertiesToolStripMenuItem_Click);
             // 
             // viewTextToolStripMenuItem
             // 

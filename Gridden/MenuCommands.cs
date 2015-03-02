@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gridden.View;
+using System;
 using System.IO;
 using System.Windows.Forms;
 
@@ -19,7 +20,7 @@ namespace Gridden
         }
 
         /// <summary>
-        /// Menu comand: Map -> Save
+        /// Menu command: Map -> Save
         /// Returns the name of the .txt file it saved as.
         /// </summary>
         public static string SaveMapToFile(Map map)
@@ -33,7 +34,7 @@ namespace Gridden
             }
 
             string fullFileName = Path.Combine(mapsDirectory, mapFileName);
-            File.WriteAllText(fullFileName, map.ToString());
+            File.WriteAllText(fullFileName, map.Name + "\r\n" + map.ToString());
             return mapFileName;
         }
 
@@ -46,6 +47,7 @@ namespace Gridden
         }
 
         /// <summary>
+        /// Menu command: Map -> Load
         /// Prompts the user to browse for a .txt file to select to load as the map.
         /// </summary>
         public static Map LoadMapFromFile()
@@ -76,6 +78,37 @@ namespace Gridden
             }
 
             return map;
+        }
+
+        /// <summary>
+        /// Menu Command: Map -> Map Properties
+        /// </summary>
+        public static void ViewMapProperties()
+        {
+            int originalWidth = MapEditor.Instance.CurrentMap.MapWidth;
+            int originalHeight = MapEditor.Instance.CurrentMap.MapHeight;
+
+            MapInfoForm form = new MapInfoForm();
+            form.Map = MapEditor.Instance.CurrentMap;
+            form.ShowDialog();
+
+            // check to see if the Map was resized.
+            if (MapEditor.Instance.CurrentMap.MapWidth != originalWidth || MapEditor.Instance.CurrentMap.MapHeight != originalHeight)
+            {
+                // TODO: prompt to warn that some tiles can be chopped off (only when downsizing)?
+                MapEditor.Instance.CurrentMap = MapFactory.CopyWithNewSize(form.Map, form.Map.MapWidth, form.Map.MapHeight);
+            }
+        }
+
+        /// <summary>
+        /// Menu Command: Map -> View Text
+        /// </summary>
+        public static void ViewMapText()
+        {
+            MapTextViewer form = new MapTextViewer();
+            form.StartPosition = FormStartPosition.CenterParent;
+            form.SetMapText(MapEditor.Instance.CurrentMap.ToString());
+            form.ShowDialog();
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Gridden
             InitializeComponent();
         }
 
-        public void SetText(string text)
+        public void SetMapText(string text)
         {
             mapText.Text = text;
         }
