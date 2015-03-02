@@ -44,23 +44,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DrawingPanel.cs">
+    <Compile Include="View\DrawingPanel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="GridForm.cs">
+    <Compile Include="View\GridForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="GridForm.Designer.cs">
+    <Compile Include="View\GridForm.Designer.cs">
       <DependentUpon>GridForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ImageEditor.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Editor.cs" />
     <Compile Include="MapFactory.cs" />
-    <Compile Include="MapTextViewer.cs">
+    <Compile Include="View\MapTextViewer.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MapTextViewer.Designer.cs">
+    <Compile Include="View\MapTextViewer.Designer.cs">
       <DependentUpon>MapTextViewer.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
@@ -68,10 +68,10 @@
     <Compile Include="Sheet.cs" />
     <Compile Include="SheetFactory.cs" />
     <Compile Include="Sprite.cs" />
-    <EmbeddedResource Include="GridForm.resx">
+    <EmbeddedResource Include="View\GridForm.resx">
       <DependentUpon>GridForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MapTextViewer.resx">
+    <EmbeddedResource Include="View\MapTextViewer.resx">
       <DependentUpon>MapTextViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

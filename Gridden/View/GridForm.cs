@@ -18,15 +18,16 @@ namespace Gridden
             InitializeComponent();
 
             // an empty map.
-            _editor.SetMap(MapFactory.BuildNew("<new map>", 12, 8));
+            _editor.CurrentMap = MapFactory.BuildNew("<new map>", 12, 8);
 
-            // testing only...
-            _editor.SetSheet(new Sheet(new List<Sprite> {
+            // testing only... SheetFactory.GetBlank(); for no sprites
+            //_editor.CurrentSheet = SheetFactory.GetBlank();
+            _editor.CurrentSheet = SheetFactory.BuildFromSpriteList(new List<Sprite> {
                 new Sprite('s', "sun.jpg"),
                 new Sprite('e', "enemy.png"),
                 new Sprite('f', "flag.png"),
                 new Sprite('w', "stone.png")
-            }));
+            });
 
             // setup form components
             SetFormTitle(_editor.CurrentMap.Name);
@@ -92,13 +93,13 @@ namespace Gridden
                 if (e.Button == MouseButtons.Left)
                 {
                     char c = _editor.GetSprites().Where(r => r.Index == _selectedSprite).First().Char;
-                    _editor.SetTile(tileX, tileY, c);
+                    _editor.SetMapTile(tileX, tileY, c);
                 }
                 else
                 {
                     if (!_editor.IsMapPositionFree(tileX, tileY))
                     {
-                        _editor.ClearTile(tileX, tileY);
+                        _editor.ClearMapTile(tileX, tileY);
                     }
                 }
 
@@ -172,7 +173,7 @@ namespace Gridden
 
                     if (!_editor.IsMapPositionFree(i, j))
                     {
-                        char c = _editor.GetCharacterAtPosition(i, j);
+                        char c = _editor.GetMapCharAtPosition(i, j);
                         g.DrawImage(ImageEditor.ScaleImage(_editor.GetImageForCharacter(c), Map.TileSize, Map.TileSize), i * Map.TileSize, j * Map.TileSize);
                     }
                 }
@@ -195,7 +196,5 @@ namespace Gridden
         {
             this.toolStripStatusLabel.Text = text;
         }
-
-
     }
 }

@@ -18,7 +18,7 @@ namespace Gridden
                 string[] lines = File.ReadAllLines(fileName);
                 
                 // validation
-                if (Validate(name, lines))
+                if (ValidateMap(name, lines))
                 {
                     Map map = BuildNew(name, lines[0].Length, lines.Length);
                     for (int i = 0; i < lines.Length; i++)
@@ -42,7 +42,7 @@ namespace Gridden
             }
         }
 
-        private static bool Validate(string name, string[] lines)
+        private static bool ValidateMap(string name, string[] lines)
         {
             return true;
         }

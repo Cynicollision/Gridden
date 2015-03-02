@@ -8,7 +8,7 @@ using System.Linq;
 namespace Gridden
 {
     /// <summary>
-    /// Utility for manipulating a single (current) Map instance at a time.
+    /// Utility for manipulating a single Sheet containing images and a Map to put those images on.
     /// </summary>
     public class Editor
     {
@@ -24,6 +24,10 @@ namespace Gridden
             {
                 return _currentMap;
             }
+            set
+            {
+                _currentMap = value;
+            }
         }
 
         private Sheet _currentSheet;
@@ -33,19 +37,11 @@ namespace Gridden
             {
                 return _currentSheet;
             }
+            set
+            {
+                _currentSheet = value;
+            }
         }
-
-        public void SetSheet(Sheet s)
-        {
-            _currentSheet = s;
-        }
-
-        public void SetMap(Map m)
-        {
-            _currentMap = m;
-        }
-
-
 
         /// <summary>
         /// Builds and returns a map of characters to actual drawable Image objects
@@ -56,24 +52,24 @@ namespace Gridden
             return CurrentSheet.Sprites;
         }
 
-        public void SetTile(int x, int y, char c)
+        public void SetMapTile(int x, int y, char c)
         {
             _currentMap.SetTile(x, y, c);
         }
 
-        public void ClearTile(int x, int y)
+        public void ClearMapTile(int x, int y)
         {
             _currentMap.SetTile(x, y, ' ');
         }
 
-        public bool IsMapPositionFree(int x, int y)
-        {
-            return _currentMap.GetCharAtPosition(x, y) == ' ';
-        }
-
-        public char GetCharacterAtPosition(int x, int y)
+        public char GetMapCharAtPosition(int x, int y)
         {
             return _currentMap.GetCharAtPosition(x, y);
+        }
+
+        public bool IsMapPositionFree(int x, int y)
+        {
+            return GetMapCharAtPosition(x, y) == ' ';
         }
 
         public Image GetImageForCharacter(char c)
