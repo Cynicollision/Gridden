@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -7,8 +8,8 @@ namespace Gridden
 {
     public partial class GridForm : Form
     {
-        private int _selectedSprite = 0;
-        private Editor _editor = new Editor(); // TODO: singleton this guy
+        private int _selectedSprite = 0; // TODO: map editor property?
+        private MapEditor _editor = MapEditor.Instance;
 
         /// <summary>
         /// Constructor.
@@ -18,7 +19,7 @@ namespace Gridden
             InitializeComponent();
 
             // an empty map.
-            _editor.CurrentMap = MapFactory.BuildNew("<new map>", 12, 8);
+            _editor.CurrentMap = MapFactory.BuildNew();
 
             // testing only... SheetFactory.GetBlank(); for no sprites
             //_editor.CurrentSheet = SheetFactory.GetBlank();
@@ -54,19 +55,42 @@ namespace Gridden
 
         #endregion
 
-        #region Mouse event handlers
+        #region Menu event handlers
 
-        private void saveToolStripMenuItem_Click(object sender, System.EventArgs e)
+        // Map -> New
+        private void newToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            // TODO
+            MenuCommands.SetNewMap();
+            this.paintPanel.Invalidate();
         }
 
+        // Map -> Save
+        private void saveToolStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            string fileName = MenuCommands.SaveMapToFile(_editor.CurrentMap);
+            SetFormStatusText(String.Format("Saved successfully as {0}!", fileName));
+        }
+
+        // Map -> Load
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _editor.CurrentMap = MenuCommands.LoadMapFromFile();
+            this.paintPanel.Invalidate();
+        }
+
+        // Map -> View Text
         private void viewTextToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
             MapTextViewer viewerForm = new MapTextViewer();
             viewerForm.SetText(_editor.CurrentMap.ToString());
             viewerForm.ShowDialog();
         }
+
+        #endregion
+
+        #region Mouse event handlers
+
+
 
         private void spritePanel_MouseClick(object sender, MouseEventArgs e)
         {

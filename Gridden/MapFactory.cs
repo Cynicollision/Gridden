@@ -5,6 +5,15 @@ namespace Gridden
 {
     public static class MapFactory
     {
+        private const string DefaultMapTitle = "New map";
+        private const int DefaultMapWidth = 12;
+        private const int DefaultMapHeight = 8;
+
+        public static Map BuildNew()
+        {
+            return new Map(DefaultMapTitle, DefaultMapWidth, DefaultMapHeight);
+        }
+
         public static Map BuildNew(string name, int w, int h)
         {
             return new Map(name, w, h);
@@ -25,7 +34,7 @@ namespace Gridden
                     {
                         for (int j = 0; j < lines[0].Length; j++)
                         {
-                            map.SetTile(j, i, lines[i][j]);
+                            map.SetCharAtPosition(j, i, lines[i][j]);
                         }
                     }
 

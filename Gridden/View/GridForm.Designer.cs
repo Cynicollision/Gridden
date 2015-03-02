@@ -35,16 +35,16 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mapPropertiesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewTextToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sheetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newSheetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.propertiesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.spritePanel = new System.Windows.Forms.Panel();
             this.paintContainerPanel = new System.Windows.Forms.Panel();
-            this.paintPanel = new Gridden.DrawingPanel();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.paintPanel = new Gridden.DrawingPanel();
             this.menuStrip.SuspendLayout();
             this.paintContainerPanel.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -69,8 +69,7 @@
             this.saveToolStripMenuItem,
             this.openToolStripMenuItem,
             this.mapPropertiesToolStripMenuItem,
-            this.viewTextToolStripMenuItem,
-            this.exitToolStripMenuItem});
+            this.viewTextToolStripMenuItem});
             this.fileToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
@@ -83,6 +82,7 @@
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.newToolStripMenuItem.Text = "New";
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
@@ -100,6 +100,7 @@
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
             this.openToolStripMenuItem.Text = "Load...";
+            this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // mapPropertiesToolStripMenuItem
             // 
@@ -118,17 +119,10 @@
             this.viewTextToolStripMenuItem.Text = "View Map Text";
             this.viewTextToolStripMenuItem.Click += new System.EventHandler(this.viewTextToolStripMenuItem_Click);
             // 
-            // exitToolStripMenuItem
-            // 
-            this.exitToolStripMenuItem.BackColor = System.Drawing.Color.Black;
-            this.exitToolStripMenuItem.ForeColor = System.Drawing.Color.White;
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
-            // 
             // sheetToolStripMenuItem
             // 
             this.sheetToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newSheetToolStripMenuItem,
             this.loadToolStripMenuItem,
             this.addImageToolStripMenuItem,
             this.propertiesToolStripMenuItem1});
@@ -136,6 +130,14 @@
             this.sheetToolStripMenuItem.Name = "sheetToolStripMenuItem";
             this.sheetToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.sheetToolStripMenuItem.Text = "Sheet";
+            // 
+            // newSheetToolStripMenuItem
+            // 
+            this.newSheetToolStripMenuItem.BackColor = System.Drawing.Color.Black;
+            this.newSheetToolStripMenuItem.ForeColor = System.Drawing.Color.White;
+            this.newSheetToolStripMenuItem.Name = "newSheetToolStripMenuItem";
+            this.newSheetToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.newSheetToolStripMenuItem.Text = "New sheet";
             // 
             // loadToolStripMenuItem
             // 
@@ -188,18 +190,6 @@
             this.paintContainerPanel.Size = new System.Drawing.Size(692, 529);
             this.paintContainerPanel.TabIndex = 2;
             // 
-            // paintPanel
-            // 
-            this.paintPanel.AutoScroll = true;
-            this.paintPanel.BackColor = System.Drawing.Color.White;
-            this.paintPanel.Location = new System.Drawing.Point(3, 3);
-            this.paintPanel.Name = "paintPanel";
-            this.paintPanel.Size = new System.Drawing.Size(764, 596);
-            this.paintPanel.TabIndex = 0;
-            this.paintPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.paintPanel_Paint);
-            this.paintPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.paintPanel_Click);
-            this.paintPanel.MouseHover += new System.EventHandler(this.paintPanel_MouseHover);
-            // 
             // statusStrip
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -215,6 +205,18 @@
             this.toolStripStatusLabel.ForeColor = System.Drawing.Color.White;
             this.toolStripStatusLabel.Name = "toolStripStatusLabel";
             this.toolStripStatusLabel.Size = new System.Drawing.Size(0, 17);
+            // 
+            // paintPanel
+            // 
+            this.paintPanel.AutoScroll = true;
+            this.paintPanel.BackColor = System.Drawing.Color.White;
+            this.paintPanel.Location = new System.Drawing.Point(3, 3);
+            this.paintPanel.Name = "paintPanel";
+            this.paintPanel.Size = new System.Drawing.Size(764, 596);
+            this.paintPanel.TabIndex = 0;
+            this.paintPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.paintPanel_Paint);
+            this.paintPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.paintPanel_Click);
+            this.paintPanel.MouseHover += new System.EventHandler(this.paintPanel_MouseHover);
             // 
             // GridForm
             // 
@@ -246,7 +248,6 @@
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.Panel spritePanel;
         private DrawingPanel paintPanel;
         private System.Windows.Forms.Panel paintContainerPanel;
@@ -258,6 +259,7 @@
         private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addImageToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem propertiesToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem newSheetToolStripMenuItem;
     }
 }
 

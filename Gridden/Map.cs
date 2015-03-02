@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Gridden
 {
@@ -82,32 +83,16 @@ namespace Gridden
         /// <summary>
         /// Sets the tile in the given (x, y) position to character c.
         /// </summary>
-        public void SetTile(int x, int y, char c)
+        public void SetCharAtPosition(int x, int y, char c)
         {
             _map[x][y] = c;
-        }
-
-        /// <summary>
-        /// Adds an image with the given fileName to the available sprites for this map
-        /// and assigns the given character c to represent that image.
-        /// </summary>
-        public void AddSprite(char c, string fileName)
-        {
-            _sprites.Add(c, fileName);
-        }
-
-        /// <summary>
-        /// Return the character -> fileName map of images for tiles.
-        /// </summary>
-        public Dictionary<char, string> GetSprites()
-        {
-            return _sprites;
         }
 
         public char GetCharAtPosition(int x, int y)
         {
             return _map[x][y];
         }
+
 
         /// <summary>
         /// ToString override to format the map visually as depicted in the grid editor

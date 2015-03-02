@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MenuCommands.cs" />
     <Compile Include="View\DrawingPanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -55,8 +56,14 @@
     </Compile>
     <Compile Include="ImageEditor.cs" />
     <Compile Include="Map.cs" />
-    <Compile Include="Editor.cs" />
+    <Compile Include="MapEditor.cs" />
     <Compile Include="MapFactory.cs" />
+    <Compile Include="View\MapInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\MapInfoForm.Designer.cs">
+      <DependentUpon>MapInfoForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\MapTextViewer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -70,6 +77,9 @@
     <Compile Include="Sprite.cs" />
     <EmbeddedResource Include="View\GridForm.resx">
       <DependentUpon>GridForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\MapInfoForm.resx">
+      <DependentUpon>MapInfoForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\MapTextViewer.resx">
       <DependentUpon>MapTextViewer.cs</DependentUpon>

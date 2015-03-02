@@ -10,12 +10,28 @@ namespace Gridden
     /// <summary>
     /// Utility for manipulating a single Sheet containing images and a Map to put those images on.
     /// </summary>
-    public class Editor
+    public class MapEditor
     {
-        public Editor()
+        private static MapEditor instance;
+
+        private MapEditor()
         {
             _currentSheet = SheetFactory.GetBlank();
         }
+
+        public static MapEditor Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new MapEditor();
+                }
+                return instance;
+            }
+        }
+
+        #region Public properties
 
         private Map _currentMap;
         public Map CurrentMap
@@ -43,6 +59,8 @@ namespace Gridden
             }
         }
 
+        #endregion
+
         /// <summary>
         /// Builds and returns a map of characters to actual drawable Image objects
         /// created from the file names in the current Map.
@@ -54,17 +72,17 @@ namespace Gridden
 
         public void SetMapTile(int x, int y, char c)
         {
-            _currentMap.SetTile(x, y, c);
+            CurrentMap.SetCharAtPosition(x, y, c);
         }
 
         public void ClearMapTile(int x, int y)
         {
-            _currentMap.SetTile(x, y, ' ');
+            CurrentMap.SetCharAtPosition(x, y, ' ');
         }
 
         public char GetMapCharAtPosition(int x, int y)
         {
-            return _currentMap.GetCharAtPosition(x, y);
+            return CurrentMap.GetCharAtPosition(x, y);
         }
 
         public bool IsMapPositionFree(int x, int y)
