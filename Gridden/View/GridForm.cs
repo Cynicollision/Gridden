@@ -6,10 +6,13 @@ using System.Windows.Forms;
 
 namespace Gridden
 {
+    /// <summary>
+    /// Main form of the application.
+    /// </summary>
     public partial class GridForm : Form
     {
-        private int _selectedSprite = 0; // TODO: map editor property?
-        private MapEditor _editor = MapEditor.Instance;
+        private MapEditor _mapEditor = MapEditor.Instance;
+        private SheetEditor _sheetEditor = SheetEditor.Instance;
 
         /// <summary>
         /// Constructor.
@@ -19,16 +22,19 @@ namespace Gridden
             InitializeComponent();
 
             // an empty map.
-            _editor.CurrentMap = MapFactory.BuildNew();
+            _mapEditor.CurrentMap = MapFactory.BuildNew();
 
-            // testing only... SheetFactory.GetBlank(); for no sprites
-            //_editor.CurrentSheet = SheetFactory.GetBlank();
-            _editor.CurrentSheet = SheetFactory.BuildFromSpriteList(new List<Sprite> {
-                new Sprite('s', "sun.jpg"),
-                new Sprite('e', "enemy.png"),
-                new Sprite('f', "flag.png"),
-                new Sprite('w', "stone.png")
-            });
+            // load the sheets
+            _sheetEditor.Sheets = SheetFactory.BuildSheetsFromFile();
+            if (_sheetEditor.Sheets.Count > 0)
+            {
+                _sheetEditor.CurrentSheet = _sheetEditor.Sheets[0];
+            }
+            else
+            {
+                // TODO: warn that there are no sheets! create a new one (prompt for name) and then request images to be added.
+            }
+
 
             // setup form components
             RefreshDisplay();
@@ -40,7 +46,7 @@ namespace Gridden
         {
             get
             {
-                return _editor.CurrentMap.MapWidth;
+                return _mapEditor.CurrentMap.MapWidth;
             }
         }
 
@@ -48,7 +54,7 @@ namespace Gridden
         {
             get
             {
-                return _editor.CurrentMap.MapHeight;
+                return _mapEditor.CurrentMap.MapHeight;
             }
         }
 
@@ -66,7 +72,7 @@ namespace Gridden
         // Map -> Save
         private void saveToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            string fileName = MenuCommands.SaveMapToFile(_editor.CurrentMap);
+            string fileName = MenuCommands.SaveMapToFile(_mapEditor.CurrentMap);
             SetFormStatusText(String.Format("Saved successfully as {0}!", fileName));
         }
 
@@ -77,7 +83,7 @@ namespace Gridden
             Map loadedMap = MenuCommands.LoadMapFromFile();
             if (loadedMap != null)
             {
-                _editor.CurrentMap = loadedMap;
+                _mapEditor.CurrentMap = loadedMap;
                 RefreshDisplay();
             }
         }
@@ -105,13 +111,13 @@ namespace Gridden
         private void spritePanel_MouseClick(object sender, MouseEventArgs e)
         {
             // set the selected sprite to the one that was clicked on.
-            for (int i = 0; i < _editor.GetSprites().Count; i++)
+            for (int i = 0; i < _sheetEditor.GetSprites().Count; i++)
             {
                 int baseX = 2;
                 int baseY = 2;
                 if (e.X > baseX + (i * (Sprite.Size + 2)) && e.X < baseX + (Sprite.Size + (i * (Sprite.Size + 2))) && e.Y > baseY && e.Y < baseY + Sprite.Size)
                 {
-                    _selectedSprite = i;
+                    _mapEditor.SelectedSprite = i;
                     this.spritePanel.Invalidate();
                 }
             }
@@ -119,36 +125,26 @@ namespace Gridden
 
         private void paintPanel_Click(object sender, MouseEventArgs e)
         {
-            if (_selectedSprite >= 0)
+            if (_mapEditor.SelectedSprite >= 0)
             {
                 int tileX = e.X / Map.TileSize;
                 int tileY = e.Y / Map.TileSize;
 
                 if (e.Button == MouseButtons.Left)
                 {
-                    char c = _editor.GetSprites().Where(r => r.Index == _selectedSprite).First().Char;
-                    _editor.SetMapTile(tileX, tileY, c);
+                    char c = _sheetEditor.GetSprites().Where(r => r.Index == _mapEditor.SelectedSprite).First().Char;
+                    _mapEditor.SetMapTile(tileX, tileY, c);
                 }
                 else
                 {
-                    if (!_editor.IsMapPositionFree(tileX, tileY))
+                    if (!_mapEditor.IsMapPositionFree(tileX, tileY))
                     {
-                        _editor.ClearMapTile(tileX, tileY);
+                        _mapEditor.ClearMapTile(tileX, tileY);
                     }
                 }
 
                 RefreshDisplay();
             }
-        }
-
-        /// <summary>
-        /// Hovering over the paint panel.
-        /// </summary>
-        private void paintPanel_MouseHover(object sender, System.EventArgs e)
-        {
-            Point point = this.paintPanel.PointToClient(Cursor.Position);
-            SetFormStatusText(point.ToString());
-            // TODO:
         }
 
         #endregion
@@ -158,13 +154,13 @@ namespace Gridden
         private void spritePanel_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            List<Sprite> sprites = _editor.GetSprites();
+            List<Sprite> sprites = _sheetEditor.GetSprites();
 
             if (sprites.Count > 0)
             {
                 // draw the tile selector.
                 SolidBrush brush = new SolidBrush(Color.Blue);
-                Rectangle r = new Rectangle(_selectedSprite * (Sprite.Size + 2), 0, Sprite.Size + 4, Sprite.Size + 4);
+                Rectangle r = new Rectangle(_mapEditor.SelectedSprite * (Sprite.Size + 2), 0, Sprite.Size + 4, Sprite.Size + 4);
                 g.FillRectangle(brush, r);
 
                 int baseX = 2;
@@ -173,7 +169,7 @@ namespace Gridden
                 {
                     // set scale and opacity.
                     Image img = ImageEditor.ScaleImage(sprites[i].Image, Sprite.Size, Sprite.Size);
-                    if (i != _selectedSprite)
+                    if (i != _mapEditor.SelectedSprite)
                     {
                         img = ImageEditor.SetImageOpacity(img, 0.5f);
                     }
@@ -205,10 +201,10 @@ namespace Gridden
                 for (int j = 0; j < GridHeight; j++)
                 {
 
-                    if (!_editor.IsMapPositionFree(i, j))
+                    if (!_mapEditor.IsMapPositionFree(i, j))
                     {
-                        char c = _editor.GetMapCharAtPosition(i, j);
-                        g.DrawImage(ImageEditor.ScaleImage(_editor.GetImageForCharacter(c), Map.TileSize, Map.TileSize), i * Map.TileSize, j * Map.TileSize);
+                        char c = _mapEditor.GetMapCharAtPosition(i, j);
+                        g.DrawImage(ImageEditor.ScaleImage(_sheetEditor.GetImageForCharacter(c), Map.TileSize, Map.TileSize), i * Map.TileSize, j * Map.TileSize);
                     }
                 }
             }

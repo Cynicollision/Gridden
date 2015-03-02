@@ -42,9 +42,9 @@
             this.propertiesToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.spritePanel = new System.Windows.Forms.Panel();
             this.paintContainerPanel = new System.Windows.Forms.Panel();
+            this.paintPanel = new Gridden.DrawingPanel();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.paintPanel = new Gridden.DrawingPanel();
             this.menuStrip.SuspendLayout();
             this.paintContainerPanel.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -191,6 +191,17 @@
             this.paintContainerPanel.Size = new System.Drawing.Size(692, 529);
             this.paintContainerPanel.TabIndex = 2;
             // 
+            // paintPanel
+            // 
+            this.paintPanel.AutoScroll = true;
+            this.paintPanel.BackColor = System.Drawing.Color.White;
+            this.paintPanel.Location = new System.Drawing.Point(3, 3);
+            this.paintPanel.Name = "paintPanel";
+            this.paintPanel.Size = new System.Drawing.Size(764, 596);
+            this.paintPanel.TabIndex = 0;
+            this.paintPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.paintPanel_Paint);
+            this.paintPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.paintPanel_Click);
+            // 
             // statusStrip
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -206,18 +217,6 @@
             this.toolStripStatusLabel.ForeColor = System.Drawing.Color.White;
             this.toolStripStatusLabel.Name = "toolStripStatusLabel";
             this.toolStripStatusLabel.Size = new System.Drawing.Size(0, 17);
-            // 
-            // paintPanel
-            // 
-            this.paintPanel.AutoScroll = true;
-            this.paintPanel.BackColor = System.Drawing.Color.White;
-            this.paintPanel.Location = new System.Drawing.Point(3, 3);
-            this.paintPanel.Name = "paintPanel";
-            this.paintPanel.Size = new System.Drawing.Size(764, 596);
-            this.paintPanel.TabIndex = 0;
-            this.paintPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.paintPanel_Paint);
-            this.paintPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.paintPanel_Click);
-            this.paintPanel.MouseHover += new System.EventHandler(this.paintPanel_MouseHover);
             // 
             // GridForm
             // 

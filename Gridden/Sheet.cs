@@ -1,19 +1,40 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Gridden
 {
+    /// <summary>
+    /// A named collection of Sprite instances.
+    /// </summary>
     public class Sheet
     {
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public Sheet(List<Sprite> sprites)
+        #region Public properties
+
+        private string _name;
+        public string Name
         {
-            _sprites = sprites;
-            _currentIdx = 0;
-            foreach (Sprite s in sprites)
+            get
             {
-                s.Index = NextIndex;
+                return _name;
+            }
+            set
+            {
+                _name = value;
+            }
+        }
+
+        private string _dir;
+        public string Directory
+        {
+            get
+            {
+                _dir = Path.Combine(Environment.CurrentDirectory, "sheets", _name.Replace(' ', '_'));
+                return _dir;
+            }
+            set
+            {
+                _dir = value;
             }
         }
 
@@ -37,12 +58,20 @@ namespace Gridden
                 }
                 return _sprites;
             }
+            set
+            {
+                _currentIdx = 0;
+                _sprites = value;
+
+                // set indices.
+                foreach (Sprite s in _sprites)
+                {
+                    s.Index = NextIndex;
+                }
+            }
         }
 
-        public void AddSprite(Sprite s)
-        {
-            s.Index = NextIndex;
-            _sprites.Add(s);
-        }
+        #endregion
+
     }
 }

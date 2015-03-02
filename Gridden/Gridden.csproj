@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MenuCommands.cs" />
+    <Compile Include="SheetEditor.cs" />
     <Compile Include="View\DrawingPanel.cs">
       <SubType>Component</SubType>
     </Compile>

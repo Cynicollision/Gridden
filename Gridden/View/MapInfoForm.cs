@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Gridden.View
 {
+    /// <summary>
+    /// Form for allowing the modification of Map properties: name, width, height.
+    /// </summary>
     public partial class MapInfoForm : Form
     {
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public MapInfoForm()
         {
             InitializeComponent();
@@ -34,13 +33,18 @@ namespace Gridden.View
             }
         }
 
-
+        /// <summary>
+        /// Event handler for clicking the "OK" button.
+        /// </summary>
         private void okButton_Click(object sender, EventArgs e)
         {
             SaveControlValuesToMap();
             this.Close();
         }
 
+        /// <summary>
+        /// Copy values from the UI controls to the Map instance.
+        /// </summary>
         private void SetControlValuesFromMap()
         {
             this.nameTextBox.Text = Map.Name;
@@ -48,6 +52,10 @@ namespace Gridden.View
             this.heightSelector.Value = Map.MapHeight;
         }
 
+
+        /// <summary>
+        /// Copy values from the Map instance to the UI controls.
+        /// </summary>
         private void SaveControlValuesToMap()
         {
             Map.Name = this.nameTextBox.Text;

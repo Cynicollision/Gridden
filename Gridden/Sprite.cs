@@ -2,15 +2,23 @@
 
 namespace Gridden
 {
+    /// <summary>
+    /// Represents character -> image file name pair. 
+    /// </summary>
     public class Sprite
     {
         public const int Size = 32;
+        public Sprite()
+        {
+        }
 
         public Sprite(char c, string fileName)
         {
             _char = c;
             _fileName = fileName;
         }
+
+        #region Public properties
 
         private int _index;
         public int Index
@@ -64,5 +72,8 @@ namespace Gridden
                 return _image;
             }
         }
+
+        #endregion
+
     }
 }

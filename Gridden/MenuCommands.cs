@@ -1,12 +1,20 @@
 ﻿using Gridden.View;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 
 namespace Gridden
 {
+    /// <summary>
+    /// Application-level commands, mostly driven from menu actions.
+    /// </summary>
     public class MenuCommands
     {
+        private const string SheetFileName = "sheets.xml";
+        private const string SheetFileDirectory = "sheets";
+
         /// <summary>
         /// Menu command: Map -> New
         /// </summary>
@@ -95,7 +103,6 @@ namespace Gridden
             // check to see if the Map was resized.
             if (MapEditor.Instance.CurrentMap.MapWidth != originalWidth || MapEditor.Instance.CurrentMap.MapHeight != originalHeight)
             {
-                // TODO: prompt to warn that some tiles can be chopped off (only when downsizing)?
                 MapEditor.Instance.CurrentMap = MapFactory.CopyWithNewSize(form.Map, form.Map.MapWidth, form.Map.MapHeight);
             }
         }
@@ -109,6 +116,31 @@ namespace Gridden
             form.StartPosition = FormStartPosition.CenterParent;
             form.SetMapText(MapEditor.Instance.CurrentMap.ToString());
             form.ShowDialog();
+        }
+
+        /// <summary>
+        /// Saves all sheets managed by the application to the .xml file.
+        /// </summary>
+        public static void SaveSheetsToFile()
+        {
+            try
+            {
+                // create the directory if it does not exist.
+                string dir = Path.Combine(Environment.CurrentDirectory, SheetFileDirectory);
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+
+                XmlSerializer xml = new XmlSerializer(typeof(List<Sheet>));
+                TextWriter fs = new StreamWriter(Path.Combine(dir, SheetFileName));
+                xml.Serialize(fs, SheetEditor.Instance.Sheets);
+                fs.Close();
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Failed saving sheets to .xml!", e);
+            }
         }
     }
 }

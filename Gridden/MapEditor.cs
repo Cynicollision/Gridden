@@ -1,37 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Xml.Serialization;
-using System.Linq;
-
+﻿
 namespace Gridden
 {
     /// <summary>
-    /// Utility for manipulating a single Sheet containing images and a Map to put those images on.
+    /// Singleton utility for manipulating a single Map instance.
     /// </summary>
     public class MapEditor
     {
-        private static MapEditor instance;
-
+        private static MapEditor _instance;
         private MapEditor()
         {
-            _currentSheet = SheetFactory.GetBlank();
         }
 
+        #region Public properties
+
+        // Singleton instance
         public static MapEditor Instance
         {
             get
             {
-                if (instance == null)
+                if (_instance == null)
                 {
-                    instance = new MapEditor();
+                    _instance = new MapEditor();
                 }
-                return instance;
+                return _instance;
             }
         }
-
-        #region Public properties
 
         private Map _currentMap;
         public Map CurrentMap
@@ -46,53 +39,51 @@ namespace Gridden
             }
         }
 
-        private Sheet _currentSheet;
-        public Sheet CurrentSheet
+        private int _selectedSprite;
+        public int SelectedSprite
         {
             get
             {
-                return _currentSheet;
+                return _selectedSprite;
             }
             set
             {
-                _currentSheet = value;
+                _selectedSprite = value;
             }
         }
 
         #endregion
 
         /// <summary>
-        /// Builds and returns a map of characters to actual drawable Image objects
-        /// created from the file names in the current Map.
+        /// Sets the tile at position (x, y) in the current map to the given character c.
         /// </summary>
-        public List<Sprite> GetSprites()
-        {
-            return CurrentSheet.Sprites;
-        }
-
         public void SetMapTile(int x, int y, char c)
         {
             CurrentMap.SetCharAtPosition(x, y, c);
         }
 
+        /// <summary>
+        /// Clears the tile at position (x, y) in the current map (blank space).
+        /// </summary>
         public void ClearMapTile(int x, int y)
         {
             CurrentMap.SetCharAtPosition(x, y, ' ');
         }
 
+        /// <summary>
+        /// Returns the character in the current map at position (x, y).
+        /// </summary>
         public char GetMapCharAtPosition(int x, int y)
         {
             return CurrentMap.GetCharAtPosition(x, y);
         }
 
+        /// <summary>
+        /// Returns true if the character in the current map is empty (a blank space).
+        /// </summary>
         public bool IsMapPositionFree(int x, int y)
         {
             return GetMapCharAtPosition(x, y) == ' ';
-        }
-
-        public Image GetImageForCharacter(char c)
-        {
-            return CurrentSheet.Sprites.Where(r => r.Char == c).First().Image;
         }
     }
 }

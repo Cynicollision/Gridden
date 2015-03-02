@@ -2,6 +2,9 @@
 
 namespace Gridden
 {
+    /// <summary>
+    /// Wrapper for Panel class that prevents annoying flickering when redrawing.
+    /// </summary>
     public class DrawingPanel : Panel
     {
         public DrawingPanel()

@@ -57,6 +57,9 @@ namespace Gridden
             }
         }
 
+        /// <summary>
+        /// Creates an identical copy of the given original Map with new dimensions as specified.
+        /// </summary>
         public static Map CopyWithNewSize(Map original, int newWidth, int newHeight)
         {
             char[][] originalCharMap = original.CharMap;
