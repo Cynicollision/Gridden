@@ -1,4 +1,6 @@
 ﻿
+using System;
+using System.IO;
 namespace Gridden
 {
     /// <summary>
@@ -84,6 +86,33 @@ namespace Gridden
         public bool IsMapPositionFree(int x, int y)
         {
             return GetMapCharAtPosition(x, y) == ' ';
+        }
+
+        /// <summary>
+        /// Menu command: Map -> Save
+        /// Returns the name of the .txt file it saved as.
+        /// </summary>
+        public string SaveCurrentMapToFile()
+        {
+            string mapFileName = GetMapFileNameForSave(CurrentMap);
+
+            string mapsDirectory = Path.Combine(Environment.CurrentDirectory, "maps");
+            if (!Directory.Exists(mapsDirectory))
+            {
+                Directory.CreateDirectory(mapsDirectory);
+            }
+
+            string fullFileName = Path.Combine(mapsDirectory, mapFileName);
+            File.WriteAllText(fullFileName, CurrentMap.Name + "\r\n" + CurrentMap.ToString());
+            return mapFileName;
+        }
+
+        /// <summary>
+        /// Returns the .txt file name to save the map as.
+        /// </summary>
+        private string GetMapFileNameForSave(Map map)
+        {
+            return map.Name.Replace(' ', '_') + ".txt";
         }
     }
 }

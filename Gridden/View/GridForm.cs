@@ -72,7 +72,7 @@ namespace Gridden
         // Map -> Save
         private void saveToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            string fileName = MenuCommands.SaveMapToFile(_mapEditor.CurrentMap);
+            string fileName = MenuCommands.SaveCurrentMapToFile();
             SetFormStatusText(String.Format("Saved successfully as {0}!", fileName));
         }
 
@@ -223,8 +223,6 @@ namespace Gridden
             this.paintPanel.Size = new Size(currentMap.MapWidth * Map.TileSize, currentMap.MapHeight * Map.TileSize);
             this.paintPanel.Invalidate();
         }
-
-
     
         public void SetFormStatusText(string text)
         {

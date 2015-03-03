@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Xml.Serialization;
 
 namespace Gridden
 {
@@ -9,6 +12,9 @@ namespace Gridden
     /// </summary>
     public class SheetEditor
     {
+        public const string SheetFileName = "sheets.xml";
+        public const string SheetFileDirectory = "sheets";
+
         private static SheetEditor _instance;
         private SheetEditor()
         {
@@ -76,6 +82,32 @@ namespace Gridden
         public Image GetImageForCharacter(char c)
         {
             return CurrentSheet.Sprites.Where(r => r.Char == c).First().Image;
+        }
+
+
+        /// <summary>
+        /// Saves all sheets managed by the application to the .xml file.
+        /// </summary>
+        public static void SaveSheetsToFile()
+        {
+            try
+            {
+                // create the directory if it does not exist.
+                string dir = Path.Combine(Environment.CurrentDirectory, SheetFileDirectory);
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+
+                XmlSerializer xml = new XmlSerializer(typeof(List<Sheet>));
+                TextWriter fs = new StreamWriter(Path.Combine(dir, SheetFileName));
+                xml.Serialize(fs, SheetEditor.Instance.Sheets);
+                fs.Close();
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Failed saving sheets to .xml!", e);
+            }
         }
     }
 }

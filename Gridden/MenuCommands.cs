@@ -1,9 +1,7 @@
 ﻿using Gridden.View;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
-using System.Xml.Serialization;
 
 namespace Gridden
 {
@@ -12,9 +10,6 @@ namespace Gridden
     /// </summary>
     public class MenuCommands
     {
-        private const string SheetFileName = "sheets.xml";
-        private const string SheetFileDirectory = "sheets";
-
         /// <summary>
         /// Menu command: Map -> New
         /// </summary>
@@ -25,33 +20,6 @@ namespace Gridden
             {
                 MapEditor.Instance.CurrentMap = MapFactory.BuildNew();
             }
-        }
-
-        /// <summary>
-        /// Menu command: Map -> Save
-        /// Returns the name of the .txt file it saved as.
-        /// </summary>
-        public static string SaveMapToFile(Map map)
-        {
-            string mapFileName = GetMapFileNameForSave(map);
-
-            string mapsDirectory = Path.Combine(Environment.CurrentDirectory, "maps");
-            if (!Directory.Exists(mapsDirectory))
-            {
-                Directory.CreateDirectory(mapsDirectory);
-            }
-
-            string fullFileName = Path.Combine(mapsDirectory, mapFileName);
-            File.WriteAllText(fullFileName, map.Name + "\r\n" + map.ToString());
-            return mapFileName;
-        }
-
-        /// <summary>
-        /// Returns the .txt file name to save the map as.
-        /// </summary>
-        private static string GetMapFileNameForSave(Map map)
-        {
-           return map.Name.Replace(' ', '_') + ".txt";
         }
 
         /// <summary>
@@ -89,6 +57,15 @@ namespace Gridden
         }
 
         /// <summary>
+        /// Menu Command: Map -> Save
+        /// </summary>
+        /// <returns></returns>
+        public static string SaveCurrentMapToFile()
+        {
+            return MapEditor.Instance.SaveCurrentMapToFile();
+        }
+
+        /// <summary>
         /// Menu Command: Map -> Map Properties
         /// </summary>
         public static void ViewMapProperties()
@@ -116,31 +93,6 @@ namespace Gridden
             form.StartPosition = FormStartPosition.CenterParent;
             form.SetMapText(MapEditor.Instance.CurrentMap.ToString());
             form.ShowDialog();
-        }
-
-        /// <summary>
-        /// Saves all sheets managed by the application to the .xml file.
-        /// </summary>
-        public static void SaveSheetsToFile()
-        {
-            try
-            {
-                // create the directory if it does not exist.
-                string dir = Path.Combine(Environment.CurrentDirectory, SheetFileDirectory);
-                if (!Directory.Exists(dir))
-                {
-                    Directory.CreateDirectory(dir);
-                }
-
-                XmlSerializer xml = new XmlSerializer(typeof(List<Sheet>));
-                TextWriter fs = new StreamWriter(Path.Combine(dir, SheetFileName));
-                xml.Serialize(fs, SheetEditor.Instance.Sheets);
-                fs.Close();
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Failed saving sheets to .xml!", e);
-            }
         }
     }
 }

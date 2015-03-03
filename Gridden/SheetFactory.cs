@@ -11,9 +11,6 @@ namespace Gridden
     /// </summary>
     public static class SheetFactory
     {
-        private const string SheetFileName = "sheets.xml";
-        private const string SheetFileDirectory = "sheets";
-
         /// <summary>
         /// Returns and returns an "empty" Sheet object.
         /// </summary>
@@ -31,7 +28,7 @@ namespace Gridden
         {
             try
             {
-                string fileName = Path.Combine(Environment.CurrentDirectory, SheetFileDirectory, SheetFileName);
+                string fileName = Path.Combine(Environment.CurrentDirectory, SheetEditor.SheetFileDirectory, SheetEditor.SheetFileName);
 
                 FileStream fs = new FileStream(fileName, FileMode.Open);
                 XmlReader reader = XmlReader.Create(fs);
