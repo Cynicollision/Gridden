@@ -8,14 +8,8 @@ namespace Gridden
     /// </summary>
     public class MapEditor
     {
-        private static MapEditor _instance;
-        private MapEditor()
-        {
-        }
-
-        #region Public properties
-
         // Singleton instance
+        private static MapEditor _instance;
         public static MapEditor Instance
         {
             get
@@ -27,6 +21,12 @@ namespace Gridden
                 return _instance;
             }
         }
+
+        private MapEditor()
+        {
+        }
+
+        #region Public properties
 
         private Map _currentMap;
         public Map CurrentMap
@@ -41,19 +41,18 @@ namespace Gridden
             }
         }
 
-        private int _selectedSprite;
-        public int SelectedSprite
+        private int _selectedSpriteIndex;
+        public int SelectedSpriteIndex
         {
             get
             {
-                return _selectedSprite;
+                return _selectedSpriteIndex;
             }
             set
             {
-                _selectedSprite = value;
+                _selectedSpriteIndex = value;
             }
         }
-
         #endregion
 
         /// <summary>

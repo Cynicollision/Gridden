@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Gridden
 {
@@ -24,29 +25,6 @@ namespace Gridden
             }
         }
 
-        private string _dir;
-        public string Directory
-        {
-            get
-            {
-                _dir = Path.Combine(Environment.CurrentDirectory, "sheets", _name.Replace(' ', '_'));
-                return _dir;
-            }
-            set
-            {
-                _dir = value;
-            }
-        }
-
-        private int _currentIdx;
-        private int NextIndex
-        {
-            get
-            {
-                return _currentIdx++;
-            }
-        }
-
         private List<Sprite> _sprites;
         public List<Sprite> Sprites
         {
@@ -58,20 +36,29 @@ namespace Gridden
                 }
                 return _sprites;
             }
-            set
-            {
-                _currentIdx = 0;
-                _sprites = value;
-
-                // set indices.
-                foreach (Sprite s in _sprites)
-                {
-                    s.Index = NextIndex;
-                }
-            }
         }
 
         #endregion
 
+        /// <summary>
+        /// Reassigns all Sprite's indices starting at 0.
+        /// </summary>
+        private void ReassignSpriteIndices()
+        {
+            int currentIdx = 0;
+            foreach (Sprite s in _sprites)
+            {
+                s.Index = currentIdx++;
+            }
+        }
+
+        /// <summary>
+        /// Removes the given Sprite object from the collection.
+        /// </summary>
+        public void RemoveSprite(Sprite sprite)
+        {
+            Sprites.Remove(sprite);
+            ReassignSpriteIndices();
+        }
     }
 }

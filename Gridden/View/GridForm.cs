@@ -32,9 +32,8 @@ namespace Gridden
             }
             else
             {
-                // TODO: warn that there are no sheets! create a new one (prompt for name) and then request images to be added.
+                // TODO: create a new one (defaultSheet) and then tell user to use Sheet -> Add images (or drag) onto app.
             }
-
 
             // setup form components
             RefreshDisplay();
@@ -106,36 +105,52 @@ namespace Gridden
 
         #region Mouse event handlers
 
-
-
+        /// <summary>
+        /// Event handler for clicking on the sheet "toolbar".
+        /// Left-clicking is used to select a sprite and right-clicking is used to remove it from the sheet.
+        /// </summary>
         private void spritePanel_MouseClick(object sender, MouseEventArgs e)
         {
+            var sprites = _sheetEditor.GetSpritesFromCurrentSheet();
+
             // set the selected sprite to the one that was clicked on.
-            for (int i = 0; i < _sheetEditor.GetSprites().Count; i++)
+            for (int i = 0; i < sprites.Count; i++)
             {
                 int baseX = 2;
                 int baseY = 2;
                 if (e.X > baseX + (i * (Sprite.Size + 2)) && e.X < baseX + (Sprite.Size + (i * (Sprite.Size + 2))) && e.Y > baseY && e.Y < baseY + Sprite.Size)
                 {
-                    _mapEditor.SelectedSprite = i;
+                    _mapEditor.SelectedSpriteIndex = i;
                     this.spritePanel.Invalidate();
                 }
             }
+
+            // if right-clicking, prompt the user to delete the selected sprite from the sheet
+            if (e.Button == MouseButtons.Right)
+            {
+                Sprite toDelete = sprites.Where(r => r.Index == _mapEditor.SelectedSpriteIndex).First();
+                _sheetEditor.RemoveSpriteFromCurrentSheet(toDelete);
+                _mapEditor.SelectedSpriteIndex = 0;
+            }
         }
 
+        /// <summary>
+        /// Event handler for clicking on the paint panel (the grid).
+        /// Left clicking is used to place tiles and right-clicking is used to remove them.
+        /// </summary>
         private void paintPanel_Click(object sender, MouseEventArgs e)
         {
-            if (_mapEditor.SelectedSprite >= 0)
+            if (_mapEditor.SelectedSpriteIndex >= 0)
             {
                 int tileX = e.X / Map.TileSize;
                 int tileY = e.Y / Map.TileSize;
 
                 if (e.Button == MouseButtons.Left)
                 {
-                    char c = _sheetEditor.GetSprites().Where(r => r.Index == _mapEditor.SelectedSprite).First().Char;
+                    char c = _sheetEditor.GetSpritesFromCurrentSheet().Where(r => r.Index == _mapEditor.SelectedSpriteIndex).First().Char;
                     _mapEditor.SetMapTile(tileX, tileY, c);
                 }
-                else
+                else if (e.Button == MouseButtons.Right)
                 {
                     if (!_mapEditor.IsMapPositionFree(tileX, tileY))
                     {
@@ -154,13 +169,13 @@ namespace Gridden
         private void spritePanel_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            List<Sprite> sprites = _sheetEditor.GetSprites();
+            List<Sprite> sprites = _sheetEditor.GetSpritesFromCurrentSheet();
 
             if (sprites.Count > 0)
             {
                 // draw the tile selector.
                 SolidBrush brush = new SolidBrush(Color.Blue);
-                Rectangle r = new Rectangle(_mapEditor.SelectedSprite * (Sprite.Size + 2), 0, Sprite.Size + 4, Sprite.Size + 4);
+                Rectangle r = new Rectangle(_mapEditor.SelectedSpriteIndex * (Sprite.Size + 2), 0, Sprite.Size + 4, Sprite.Size + 4);
                 g.FillRectangle(brush, r);
 
                 int baseX = 2;
@@ -169,7 +184,7 @@ namespace Gridden
                 {
                     // set scale and opacity.
                     Image img = ImageEditor.ScaleImage(sprites[i].Image, Sprite.Size, Sprite.Size);
-                    if (i != _mapEditor.SelectedSprite)
+                    if (i != _mapEditor.SelectedSpriteIndex)
                     {
                         img = ImageEditor.SetImageOpacity(img, 0.5f);
                     }
@@ -212,6 +227,9 @@ namespace Gridden
 
         #endregion
 
+        /// <summary>
+        /// Refresh the display by updating the form title and redrawing the grid.
+        /// </summary>
         private void RefreshDisplay()
         {
             Map currentMap = MapEditor.Instance.CurrentMap;
@@ -224,6 +242,9 @@ namespace Gridden
             this.paintPanel.Invalidate();
         }
     
+        /// <summary>
+        /// Sets the text in the form's status strip.
+        /// </summary>
         public void SetFormStatusText(string text)
         {
             this.toolStripStatusLabel.Text = text;

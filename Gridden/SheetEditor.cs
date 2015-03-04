@@ -15,14 +15,8 @@ namespace Gridden
         public const string SheetFileName = "sheets.xml";
         public const string SheetFileDirectory = "sheets";
 
-        private static SheetEditor _instance;
-        private SheetEditor()
-        {
-        }
-
-        #region Public properties
-
         // Singleton instance.
+        private static SheetEditor _instance;
         public static SheetEditor Instance
         {
             get
@@ -34,6 +28,12 @@ namespace Gridden
                 return _instance;
             }
         }
+
+        private SheetEditor()
+        {
+        }
+
+        #region Public properties
 
         private List<Sheet> _sheets;
         public List<Sheet> Sheets
@@ -71,7 +71,7 @@ namespace Gridden
         /// Returns the collection of Sprite instances that are part of the current Sheet.
         /// </summary>
         /// <returns></returns>
-        public List<Sprite> GetSprites()
+        public List<Sprite> GetSpritesFromCurrentSheet()
         {
             return _currentSheet.Sprites;
         }
@@ -84,6 +84,31 @@ namespace Gridden
             return CurrentSheet.Sprites.Where(r => r.Char == c).First().Image;
         }
 
+        /// <summary>
+        /// Creates a new sprite from the given file and assigns it the given character for the map.
+        /// This will throw an exception if there is already a Sprite in the collection assigned to the given character.
+        /// </summary>
+        public int AddSpriteToCurrentSheet(char c, string fileName)
+        {
+            // TODO: 
+            // 1) throw error if Sprite's char c is already in sheet
+            // 2) copy image to sheets/<sheetName>/<index>.<ext>
+            // 3) add to list with new index
+
+            SaveSheetsToFile();
+            return 0; // TODO: return the new Sprite's index?
+        }
+
+        /// <summary>
+        /// Removes the given Sprite from the current sheet.
+        /// </summary>
+        public void RemoveSpriteFromCurrentSheet(Sprite s)
+        {
+            string fileName = s.FileName;
+            // TODO: use fileName to delete the actual file sheets/<sheetName>/<index>
+            CurrentSheet.RemoveSprite(s);
+            SaveSheetsToFile();
+        }
 
         /// <summary>
         /// Saves all sheets managed by the application to the .xml file.
