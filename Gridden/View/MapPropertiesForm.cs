@@ -6,12 +6,12 @@ namespace Gridden.View
     /// <summary>
     /// Form for allowing the modification of Map properties: name, width, height.
     /// </summary>
-    public partial class MapInfoForm : Form
+    public partial class MapPropertiesForm : Form
     {
         /// <summary>
         /// Constructor.
         /// </summary>
-        public MapInfoForm()
+        public MapPropertiesForm()
         {
             InitializeComponent();
 

@@ -20,26 +20,26 @@ namespace Gridden
         }
 
         /// <summary>
-        /// Builds and returns a collection of Sheet objects from the persistent storage (.xml file).
-        /// If the .xml file does not exist an empty collection is returned.
+        /// Returns a new Sheet object instantiated from the .xml storage file.
         /// </summary>
-        public static List<Sheet> BuildSheetsFromFile()
+        public static Sheet LoadSheetFromFile()
         {
-            List<Sheet> loadedSheets = new List<Sheet>();
+            Sheet loadedSheet = SheetFactory.GetBlank();
 
             try
             {
-                string fileName = Path.Combine(Environment.CurrentDirectory, SheetEditor.SheetFileDirectory, SheetEditor.SheetFileName);
+                string fileName = Path.Combine(Environment.CurrentDirectory, SheetEditor.SheetFileName);
                 if (File.Exists(fileName))
                 {
                     FileStream fs = new FileStream(fileName, FileMode.Open);
                     XmlReader reader = XmlReader.Create(fs);
-
-                    XmlSerializer xml = new XmlSerializer(typeof(List<Sheet>));
-                    loadedSheets = (List<Sheet>)xml.Deserialize(reader);
+                    XmlSerializer xml = new XmlSerializer(typeof(Sheet));
+                    loadedSheet = (Sheet)xml.Deserialize(reader);
+                    reader.Close();
+                    fs.Close();
                 }
 
-                return loadedSheets;
+                return loadedSheet;
             }
             catch (Exception e)
             {

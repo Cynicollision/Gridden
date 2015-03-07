@@ -7,7 +7,7 @@ namespace Gridden
     /// <summary>
     /// Some utility-methods for manipulating Image objects that I found on StackOverflow.
     /// </summary>
-    public class ImageEditor
+    public class ImageUtility
     {
         // source: http://stackoverflow.com/questions/4779027/changing-the-opacity-of-a-bitmap-image
         public static Image SetImageOpacity(Image image, float opacity)

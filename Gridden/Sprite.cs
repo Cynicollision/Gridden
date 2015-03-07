@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
+using System.IO;
 
 namespace Gridden
 {
@@ -70,6 +72,28 @@ namespace Gridden
                 }
 
                 return _image;
+            }
+        }
+
+        /// <summary>
+        /// Renames the file that is associated with this Sprite to match its index.
+        /// </summary>
+        public void UpdateFileName()
+        {
+            try
+            {
+                string newFileName = Path.Combine(Environment.CurrentDirectory, SheetEditor.SheetFolderName, Index + Path.GetExtension(FileName));
+                if (File.Exists(FileName) && newFileName != FileName)
+                {
+                    _image.Dispose();
+                    File.Move(FileName, newFileName);
+                    _image = Image.FromFile(newFileName);
+                    FileName = newFileName;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Failed renaming sprite file! See inner exception.", e);
             }
         }
 

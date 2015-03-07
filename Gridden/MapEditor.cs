@@ -26,8 +26,6 @@ namespace Gridden
         {
         }
 
-        #region Public properties
-
         private Map _currentMap;
         public Map CurrentMap
         {
@@ -40,20 +38,6 @@ namespace Gridden
                 _currentMap = value;
             }
         }
-
-        private int _selectedSpriteIndex;
-        public int SelectedSpriteIndex
-        {
-            get
-            {
-                return _selectedSpriteIndex;
-            }
-            set
-            {
-                _selectedSpriteIndex = value;
-            }
-        }
-        #endregion
 
         /// <summary>
         /// Sets the tile at position (x, y) in the current map to the given character c.
@@ -88,8 +72,24 @@ namespace Gridden
         }
 
         /// <summary>
-        /// Menu command: Map -> Save
-        /// Returns the name of the .txt file it saved as.
+        /// Clears any spaces in the grid that match the given character.
+        /// </summary>
+        public void RemoveCharacterFromMap(char c)
+        {
+            for (int i = 0; i < CurrentMap.MapWidth; i++)
+            {
+                for (int j = 0; j < CurrentMap.MapHeight; j++)
+                {
+                    if (CurrentMap.GetCharAtPosition(i, j) == c)
+                    {
+                        CurrentMap.SetCharAtPosition(i, j, ' ');
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Saves the current map to a .txt file.
         /// </summary>
         public string SaveCurrentMapToFile()
         {

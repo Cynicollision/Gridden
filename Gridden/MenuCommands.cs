@@ -6,12 +6,12 @@ using System.Windows.Forms;
 namespace Gridden
 {
     /// <summary>
-    /// Application-level commands, mostly driven from menu actions.
+    /// Application-level commands driven from menu actions.
     /// </summary>
     public class MenuCommands
     {
         /// <summary>
-        /// Menu command: Map -> New
+        /// Menu command: New
         /// </summary>
         public static void SetNewMap()
         {
@@ -19,11 +19,12 @@ namespace Gridden
             if (result != DialogResult.No)
             {
                 MapEditor.Instance.CurrentMap = MapFactory.BuildNew();
+                ViewMapProperties();
             }
         }
 
         /// <summary>
-        /// Menu command: Map -> Load
+        /// Menu command: Load
         /// Prompts the user to browse for a .txt file to select to load as the map.
         /// </summary>
         public static Map LoadMapFromFile()
@@ -57,23 +58,55 @@ namespace Gridden
         }
 
         /// <summary>
-        /// Menu Command: Map -> Save
+        /// Menu Command: Save
         /// </summary>
-        /// <returns></returns>
         public static string SaveCurrentMapToFile()
         {
             return MapEditor.Instance.SaveCurrentMapToFile();
         }
 
         /// <summary>
-        /// Menu Command: Map -> Map Properties
+        /// Menu Command: Map -> Add image
+        /// </summary>
+        public static void AddImageToSheet()
+        {
+
+            try
+            {
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.jfif, *.png) | *.jpg; *.jpeg; *.jpe; *.jfif; *.png";
+                DialogResult dr = ofd.ShowDialog();
+
+                if (dr == DialogResult.OK)
+                {
+                    if (File.Exists(ofd.FileName))
+                    {
+                        // prompt for single character to use to represent the Sprite.
+                        NewSpriteForm form = new NewSpriteForm();
+                        form.FileName = ofd.FileName;
+                        form.ShowDialog();
+                    }
+                    else
+                    {
+                        throw new Exception("Selected file does not exist!");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Menu Command: Map Properties
         /// </summary>
         public static void ViewMapProperties()
         {
             int originalWidth = MapEditor.Instance.CurrentMap.MapWidth;
             int originalHeight = MapEditor.Instance.CurrentMap.MapHeight;
 
-            MapInfoForm form = new MapInfoForm();
+            MapPropertiesForm form = new MapPropertiesForm();
             form.Map = MapEditor.Instance.CurrentMap;
             form.ShowDialog();
 
@@ -85,7 +118,7 @@ namespace Gridden
         }
 
         /// <summary>
-        /// Menu Command: Map -> View Text
+        /// Menu Command: View Text
         /// </summary>
         public static void ViewMapText()
         {

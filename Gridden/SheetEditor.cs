@@ -13,7 +13,7 @@ namespace Gridden
     public class SheetEditor
     {
         public const string SheetFileName = "sheets.xml";
-        public const string SheetFileDirectory = "sheets";
+        public const string SheetFolderName = "images";
 
         // Singleton instance.
         private static SheetEditor _instance;
@@ -35,23 +35,6 @@ namespace Gridden
 
         #region Public properties
 
-        private List<Sheet> _sheets;
-        public List<Sheet> Sheets
-        {
-            get
-            {
-                if (_sheets == null)
-                {
-                    _sheets = new List<Sheet>();
-                }
-                return _sheets;
-            }
-            set
-            {
-                _sheets = value;
-            }
-        }
-
         private Sheet _currentSheet;
         public Sheet CurrentSheet
         {
@@ -65,13 +48,26 @@ namespace Gridden
             }
         }
 
+        private int _selectedSpriteIndex;
+        public int SelectedSpriteIndex
+        {
+            get
+            {
+                return _selectedSpriteIndex;
+            }
+            set
+            {
+                _selectedSpriteIndex = value;
+            }
+        }
+
         #endregion
 
         /// <summary>
         /// Returns the collection of Sprite instances that are part of the current Sheet.
         /// </summary>
         /// <returns></returns>
-        public List<Sprite> GetSpritesFromCurrentSheet()
+        public List<Sprite> GetSpritesFromSheet()
         {
             return _currentSheet.Sprites;
         }
@@ -85,53 +81,63 @@ namespace Gridden
         }
 
         /// <summary>
+        /// Returns the sprite with the given index.
+        /// </summary>
+        public Sprite GetSpriteByIndex(int index)
+        {
+            return CurrentSheet.Sprites.Where(r => r.Index == index).First();
+        }
+
+        /// <summary>
         /// Creates a new sprite from the given file and assigns it the given character for the map.
         /// This will throw an exception if there is already a Sprite in the collection assigned to the given character.
         /// </summary>
-        public int AddSpriteToCurrentSheet(char c, string fileName)
+        public void AddSpriteToSheet(char c, string sourceFileName)
         {
-            // TODO: 
-            // 1) throw error if Sprite's char c is already in sheet
-            // 2) copy image to sheets/<sheetName>/<index>.<ext>
-            // 3) add to list with new index
+            // create the sheet folder if it doesn't exist yet.
+            string sheetDir = Path.Combine(Environment.CurrentDirectory, SheetEditor.SheetFolderName);
+            if (!Directory.Exists(sheetDir))
+            {
+                Directory.CreateDirectory(sheetDir);
+            }
 
-            SaveSheetsToFile();
-            return 0; // TODO: return the new Sprite's index?
+            // build the new file name and copy the file to the local folder.
+            int newIndex = CurrentSheet.Sprites.Count;
+            string newFileName = Path.Combine(sheetDir, newIndex + Path.GetExtension(sourceFileName));
+            File.Copy(sourceFileName, newFileName);
+
+            // add the Sprite to the Sheet, then save it.
+            CurrentSheet.AddNewSprite(c, newFileName);
+            SaveSheetToFile();
         }
 
         /// <summary>
         /// Removes the given Sprite from the current sheet.
         /// </summary>
-        public void RemoveSpriteFromCurrentSheet(Sprite s)
+        public void RemoveSpriteFromCurrentSheet(int index)
         {
-            string fileName = s.FileName;
-            // TODO: use fileName to delete the actual file sheets/<sheetName>/<index>
-            CurrentSheet.RemoveSprite(s);
-            SaveSheetsToFile();
+            // remove from sheet and save.
+            CurrentSheet.RemoveSprite(index);
+            SaveSheetToFile();
+
+            SelectedSpriteIndex = 0;
         }
 
         /// <summary>
         /// Saves all sheets managed by the application to the .xml file.
         /// </summary>
-        public static void SaveSheetsToFile()
+        public static void SaveSheetToFile()
         {
             try
             {
-                // create the directory if it does not exist.
-                string dir = Path.Combine(Environment.CurrentDirectory, SheetFileDirectory);
-                if (!Directory.Exists(dir))
-                {
-                    Directory.CreateDirectory(dir);
-                }
-
-                XmlSerializer xml = new XmlSerializer(typeof(List<Sheet>));
-                TextWriter fs = new StreamWriter(Path.Combine(dir, SheetFileName));
-                xml.Serialize(fs, SheetEditor.Instance.Sheets);
+                XmlSerializer xml = new XmlSerializer(typeof(Sheet));
+                TextWriter fs = new StreamWriter(Path.Combine(Environment.CurrentDirectory, SheetFileName));
+                xml.Serialize(fs, SheetEditor.Instance.CurrentSheet);
                 fs.Close();
             }
             catch (Exception e)
             {
-                throw new Exception("Failed saving sheets to .xml!", e);
+                throw new Exception("Failed saving sheets to .xml! See inner exception.", e);
             }
         }
     }

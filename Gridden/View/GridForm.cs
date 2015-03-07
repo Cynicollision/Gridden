@@ -24,16 +24,8 @@ namespace Gridden
             // an empty map.
             _mapEditor.CurrentMap = MapFactory.BuildNew();
 
-            // load the sheets
-            _sheetEditor.Sheets = SheetFactory.BuildSheetsFromFile();
-            if (_sheetEditor.Sheets.Count > 0)
-            {
-                _sheetEditor.CurrentSheet = _sheetEditor.Sheets[0];
-            }
-            else
-            {
-                // TODO: create a new one (defaultSheet) and then tell user to use Sheet -> Add images (or drag) onto app.
-            }
+            // load the sheet
+            _sheetEditor.CurrentSheet = SheetFactory.LoadSheetFromFile();
 
             // setup form components
             RefreshDisplay();
@@ -87,6 +79,13 @@ namespace Gridden
             }
         }
 
+        // Map -> Add Image
+        private void addImageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MenuCommands.AddImageToSheet();
+            RefreshDisplay();
+        }
+
         // Map -> Map Properties
         private void mapPropertiesToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -98,7 +97,6 @@ namespace Gridden
         private void viewTextToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
             MenuCommands.ViewMapText();
-
         }
 
         #endregion
@@ -111,7 +109,7 @@ namespace Gridden
         /// </summary>
         private void spritePanel_MouseClick(object sender, MouseEventArgs e)
         {
-            var sprites = _sheetEditor.GetSpritesFromCurrentSheet();
+            var sprites = _sheetEditor.GetSpritesFromSheet();
 
             // set the selected sprite to the one that was clicked on.
             for (int i = 0; i < sprites.Count; i++)
@@ -120,7 +118,7 @@ namespace Gridden
                 int baseY = 2;
                 if (e.X > baseX + (i * (Sprite.Size + 2)) && e.X < baseX + (Sprite.Size + (i * (Sprite.Size + 2))) && e.Y > baseY && e.Y < baseY + Sprite.Size)
                 {
-                    _mapEditor.SelectedSpriteIndex = i;
+                    _sheetEditor.SelectedSpriteIndex = i;
                     this.spritePanel.Invalidate();
                 }
             }
@@ -128,9 +126,13 @@ namespace Gridden
             // if right-clicking, prompt the user to delete the selected sprite from the sheet
             if (e.Button == MouseButtons.Right)
             {
-                Sprite toDelete = sprites.Where(r => r.Index == _mapEditor.SelectedSpriteIndex).First();
-                _sheetEditor.RemoveSpriteFromCurrentSheet(toDelete);
-                _mapEditor.SelectedSpriteIndex = 0;
+                int index = _sheetEditor.SelectedSpriteIndex;
+
+                _mapEditor.RemoveCharacterFromMap(_sheetEditor.GetSpriteByIndex(index).Char);
+                RefreshDisplay();
+
+                _sheetEditor.RemoveSpriteFromCurrentSheet(index);
+                RefreshDisplay();
             }
         }
 
@@ -140,14 +142,14 @@ namespace Gridden
         /// </summary>
         private void paintPanel_Click(object sender, MouseEventArgs e)
         {
-            if (_mapEditor.SelectedSpriteIndex >= 0)
+            if (_sheetEditor.SelectedSpriteIndex >= 0)
             {
                 int tileX = e.X / Map.TileSize;
                 int tileY = e.Y / Map.TileSize;
 
                 if (e.Button == MouseButtons.Left)
                 {
-                    char c = _sheetEditor.GetSpritesFromCurrentSheet().Where(r => r.Index == _mapEditor.SelectedSpriteIndex).First().Char;
+                    char c = _sheetEditor.GetSpritesFromSheet().Where(r => r.Index == _sheetEditor.SelectedSpriteIndex).First().Char;
                     _mapEditor.SetMapTile(tileX, tileY, c);
                 }
                 else if (e.Button == MouseButtons.Right)
@@ -169,13 +171,13 @@ namespace Gridden
         private void spritePanel_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            List<Sprite> sprites = _sheetEditor.GetSpritesFromCurrentSheet();
+            List<Sprite> sprites = _sheetEditor.GetSpritesFromSheet();
 
             if (sprites.Count > 0)
             {
                 // draw the tile selector.
                 SolidBrush brush = new SolidBrush(Color.Blue);
-                Rectangle r = new Rectangle(_mapEditor.SelectedSpriteIndex * (Sprite.Size + 2), 0, Sprite.Size + 4, Sprite.Size + 4);
+                Rectangle r = new Rectangle(_sheetEditor.SelectedSpriteIndex * (Sprite.Size + 2), 0, Sprite.Size + 4, Sprite.Size + 4);
                 g.FillRectangle(brush, r);
 
                 int baseX = 2;
@@ -183,10 +185,10 @@ namespace Gridden
                 for (int i = 0; i < sprites.Count; i++)
                 {
                     // set scale and opacity.
-                    Image img = ImageEditor.ScaleImage(sprites[i].Image, Sprite.Size, Sprite.Size);
-                    if (i != _mapEditor.SelectedSpriteIndex)
+                    Image img = ImageUtility.ScaleImage(sprites[i].Image, Sprite.Size, Sprite.Size);
+                    if (i != _sheetEditor.SelectedSpriteIndex)
                     {
-                        img = ImageEditor.SetImageOpacity(img, 0.5f);
+                        img = ImageUtility.SetImageOpacity(img, 0.5f);
                     }
 
                     g.DrawImage(img, new Point(baseX + i * (Sprite.Size + 2), baseY));
@@ -219,7 +221,7 @@ namespace Gridden
                     if (!_mapEditor.IsMapPositionFree(i, j))
                     {
                         char c = _mapEditor.GetMapCharAtPosition(i, j);
-                        g.DrawImage(ImageEditor.ScaleImage(_sheetEditor.GetImageForCharacter(c), Map.TileSize, Map.TileSize), i * Map.TileSize, j * Map.TileSize);
+                        g.DrawImage(ImageUtility.ScaleImage(_sheetEditor.GetImageForCharacter(c), Map.TileSize, Map.TileSize), i * Map.TileSize, j * Map.TileSize);
                     }
                 }
             }
@@ -228,7 +230,7 @@ namespace Gridden
         #endregion
 
         /// <summary>
-        /// Refresh the display by updating the form title and redrawing the grid.
+        /// Refresh the display by updating the form title and redrawing the sheet grid.
         /// </summary>
         private void RefreshDisplay()
         {
@@ -240,6 +242,8 @@ namespace Gridden
             // resize and redraw the map editor.
             this.paintPanel.Size = new Size(currentMap.MapWidth * Map.TileSize, currentMap.MapHeight * Map.TileSize);
             this.paintPanel.Invalidate();
+
+            this.spritePanel.Invalidate();
         }
     
         /// <summary>
@@ -248,6 +252,14 @@ namespace Gridden
         public void SetFormStatusText(string text)
         {
             this.toolStripStatusLabel.Text = text;
+            System.Timers.Timer t = new System.Timers.Timer(3000);
+            t.Elapsed += statusTextTimer_Elapsed;
+            t.Start();
+        }
+
+        void statusTextTimer_Elapsed(object sender, EventArgs e)
+        {
+            this.toolStripStatusLabel.Text = "";
         }
     }
 }

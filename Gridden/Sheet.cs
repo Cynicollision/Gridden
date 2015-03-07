@@ -41,6 +41,16 @@ namespace Gridden
         #endregion
 
         /// <summary>
+        /// Adds a new Sprite to the collection with the given character c and source file name.
+        /// </summary>
+        public void AddNewSprite(char c, string fileName)
+        {
+            Sprite newSprite = new Sprite(c, fileName);
+            newSprite.Index = _sprites.Count;
+            _sprites.Add(newSprite);
+        }
+
+        /// <summary>
         /// Reassigns all Sprite's indices starting at 0.
         /// </summary>
         private void ReassignSpriteIndices()
@@ -49,15 +59,26 @@ namespace Gridden
             foreach (Sprite s in _sprites)
             {
                 s.Index = currentIdx++;
+                s.UpdateFileName();
             }
         }
 
         /// <summary>
         /// Removes the given Sprite object from the collection.
         /// </summary>
-        public void RemoveSprite(Sprite sprite)
+        public void RemoveSprite(int index)
         {
-            Sprites.Remove(sprite);
+            Sprite toDelete = _sprites.Where(r => r.Index == index).First();
+
+            // remove from Sprite collection
+            _sprites.Remove(toDelete);
+            toDelete.Image.Dispose();
+
+            if (File.Exists(toDelete.FileName))
+            {
+                File.Delete(toDelete.FileName);
+            }
+
             ReassignSpriteIndices();
         }
     }

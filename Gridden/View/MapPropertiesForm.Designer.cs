@@ -1,6 +1,6 @@
 ﻿namespace Gridden.View
 {
-    partial class MapInfoForm
+    partial class MapPropertiesForm
     {
         /// <summary>
         /// Required designer variable.
